@@ -1,5 +1,5 @@
 datasets = ['a_example', 'b_lovely_landscapes', 'c_memorable_moments', 'd_pet_pictures', 'e_shiny_selfies']
-# datasets = ['a_example']
+# datasets = ['c_memorable_moments']
 
 class Photo:
     def __init__(self, photo_id, orientation, tags):
@@ -65,18 +65,22 @@ for dataset in datasets:
             slide_id += 1
             last_vertical = []
 
-    slides_hash = {}
-    for i in range(len(slides)):
-        slides_hash[i] = sorted(slides[:i] + slides[i+1:], key=lambda x: interest_factor(slides[i].tags, x.tags), reverse=True)
-
-    slideshow.add_slide(slides[0])
-    last_added = slides[0]
+    slides_copy = slides[:]
+    last_added = slides_copy[0]
+    slideshow.add_slide(last_added)
+    slides_copy = slides_copy[1:]
     for i in range(1, len(slides)):
-        nearest_slides = slides_hash[last_added.slide_id]
-        j = 0
-        while slideshow.photo_exists(nearest_slides[j].photos[0].photo_id): j += 1
-        slideshow.add_slide(nearest_slides[j])
-        last_added = nearest_slides[j]
+        interest_factors = []
+        for slide in slides_copy:
+            interest_factors.append(interest_factor(last_added.tags, slide.tags))
+        max_if = max([x for x in interest_factors])
+        for k in range(len(slides_copy)):
+            slide = slides_copy[k]
+            if interest_factor(last_added.tags, slide.tags) == max_if:
+                last_added = slide
+                slideshow.add_slide(slide)
+                slides_copy = slides_copy[:k] + slides_copy[k+1:]
+                break
 
     slideshow.save(dataset)
 
