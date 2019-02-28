@@ -1,4 +1,4 @@
-datasets = ['a_example']
+datasets = ['a_example', 'b_lovely_landscapes', 'c_memorable_moments', 'd_pet_pictures', 'e_shiny_selfies']
 
 class Photo:
     def __init__(self, photo_id, orientation, tags):
@@ -43,6 +43,6 @@ for dataset in datasets:
     for photo in photos:
         slideshow.add_slide([photo])
 
-    slideshow.save()
+    slideshow.save(dataset)
 
 
